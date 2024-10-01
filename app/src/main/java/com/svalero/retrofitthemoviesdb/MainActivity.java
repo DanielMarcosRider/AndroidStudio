@@ -116,6 +116,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieDetails(int movieId) {
-        // Implementación de obtener detalles de película aquí
+        Call<Movie> call = RetrofitClient.getInstance()
+                .getMovieDetails(movieId, API_KEY, LANGUAGE);
+
+        call.enqueue(new Callback<Movie>() {
+            @Override
+            public void onResponse(Call<Movie> call, Response<Movie> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Movie movie = response.body();
+                    Toast.makeText(MainActivity.this, "Detalles: " + movie.getTitle() +
+                            "\nDescripción: " + movie.getOverview(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Error en la respuesta", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Movie> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
